@@ -1,7 +1,13 @@
 package proect.service;
 
-import org.springframework.stereotype.Service;
+import proect.dto.GasPriceInfoDTO;
+import proect.dto.GasStationDTO;
+import proect.model.GasStation;
 
-@Service
-public class GasStationService {
+import java.util.List;
+
+public interface GasStationService {
+    List<GasStationDTO> getStationByName(String stationName);
+
+    GasPriceInfoDTO getGasPriceInfo(String type);
 }
