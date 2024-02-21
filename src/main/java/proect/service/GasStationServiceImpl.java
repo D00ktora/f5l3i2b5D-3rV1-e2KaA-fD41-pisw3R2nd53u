@@ -22,7 +22,7 @@ public class GasStationServiceImpl implements GasStationService {
         this.modelMapper = modelMapper;
     }
 
-    public List<GasStationDTO> getStationByName(String stationName) {
+    public List<GasStationDTO> getStationsByName(String stationName) {
         List<GasStation> byName = gasStationRepository.findByName(stationName);
         List<GasStationDTO> gasStationDTOList = new ArrayList<>();
         for (GasStation gasStationDTO : byName) {
@@ -68,7 +68,7 @@ public class GasStationServiceImpl implements GasStationService {
 
         return new GasPriceInfoDTO()
                 .setMedian(median.setScale(2, RoundingMode.HALF_UP))
-                .setMax(stationPriceInfos.get(0))
-                .setMin(stationPriceInfos.get(stationPriceInfos.size() - 1));
+                .setMax(stationPriceInfos.get(stationPriceInfos.size() - 1))
+                .setMin(stationPriceInfos.get(0));
     }
 }

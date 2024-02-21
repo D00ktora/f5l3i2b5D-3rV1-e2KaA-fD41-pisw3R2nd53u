@@ -20,7 +20,7 @@ public class GasStationController {
 
     @GetMapping("/gas-stations/{name}")
     public ResponseEntity<List<GasStationDTO>> getGasStationByName(@PathVariable("name") String stationName) {
-        List<GasStationDTO> stationsByName = gasStationService.getStationByName(stationName);
+        List<GasStationDTO> stationsByName = gasStationService.getStationsByName(stationName);
         if (stationsByName.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {

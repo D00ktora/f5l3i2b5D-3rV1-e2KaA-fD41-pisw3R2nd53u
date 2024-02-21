@@ -6,7 +6,7 @@ import proect.dto.GasStationDTO;
 import java.util.List;
 
 public interface GasStationService {
-    List<GasStationDTO> getStationByName(String stationName);
+    List<GasStationDTO> getStationsByName(String stationName);
 
     GasPriceInfoDTO getGasPriceInfo(String type);
 }
