@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="project.service.GasStationServiceImplTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2024-02-21T18:36:13" hostname="Stilyans-MBP.lan" time="0.601">
+  <properties/>
+  <testcase name="[1] text=e5" classname="project.service.GasStationServiceImplTest" time="0.57"/>
+  <testcase name="[2] text=e10" classname="project.service.GasStationServiceImplTest" time="0.002"/>
+  <testcase name="[3] text=diesel" classname="project.service.GasStationServiceImplTest" time="0.002"/>
+  <testcase name="getStationsByName()" classname="project.service.GasStationServiceImplTest" time="0.014"/>
+  <testcase name="[1] text=e5" classname="project.service.GasStationServiceImplTest" time="0.002"/>
+  <testcase name="[2] text=e10" classname="project.service.GasStationServiceImplTest" time="0.001"/>
+  <testcase name="[3] text=diesel" classname="project.service.GasStationServiceImplTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

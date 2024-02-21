@@ -1,7 +1,7 @@
 # Read Me First
 The following was discovered as part of building this project:
 
-* The original package name 'pro-ect' is invalid and this project uses 'proect' instead.
+* The original package name 'pro-ect' is invalid and this project uses 'project' instead.
 
 # Getting Started
 
