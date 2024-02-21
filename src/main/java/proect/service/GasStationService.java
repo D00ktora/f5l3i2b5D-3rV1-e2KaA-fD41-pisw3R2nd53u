@@ -2,7 +2,6 @@ package proect.service;
 
 import proect.dto.GasPriceInfoDTO;
 import proect.dto.GasStationDTO;
-import proect.model.GasStation;
 
 import java.util.List;
 

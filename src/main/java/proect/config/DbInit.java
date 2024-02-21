@@ -33,7 +33,7 @@ public class DbInit implements CommandLineRunner {
         List<GasStation> gasStations = new ArrayList<>();
         for (GasStationDTO station : stationsDTO) {
             GasStation mapped = modelMapper.map(station, GasStation.class);
-            if (mapped != null) {
+            if (mapped != null && mapped.getOpen()) {
                 gasStations.add(mapped);
             }
         }
