@@ -18,7 +18,7 @@ public class GasStationController {
         this.gasStationService = gasStationService;
     }
 
-    @GetMapping("/gas-station/{name}")
+    @GetMapping("/gas-stations/{name}")
     public ResponseEntity<List<GasStationDTO>> getGasStationByName(@PathVariable("name") String stationName) {
         List<GasStationDTO> stationsByName = gasStationService.getStationByName(stationName);
         if (stationsByName.isEmpty()) {
@@ -28,7 +28,7 @@ public class GasStationController {
         }
     }
 
-    @GetMapping("/fuel-price/{fuelType}")
+    @GetMapping("/fuel-prices/{fuelType}")
     public ResponseEntity<GasPriceInfoDTO> getGasPriceInfo(@PathVariable("fuelType") String type) {
         GasPriceInfoDTO gasPriceInfo = gasStationService.getGasPriceInfo(type);
         if (gasPriceInfo != null) {
