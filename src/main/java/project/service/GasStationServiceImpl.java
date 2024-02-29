@@ -52,7 +52,7 @@ public class GasStationServiceImpl implements GasStationService {
         }
         return null;
     }
-    private static GasPriceInfoDTO calculateMinMaxAndMedian(List<BigDecimal> stationPriceInfos) {
+    public static GasPriceInfoDTO calculateMinMaxAndMedian(List<BigDecimal> stationPriceInfos) {
         BigDecimal median;
         int firstIndex = stationPriceInfos.size() / 2 - 1;
         int secondIndex = stationPriceInfos.size() / 2;

@@ -19,7 +19,7 @@ public class DbInit implements CommandLineRunner {
     private final GasStationRepository repository;
     private final ModelMapper modelMapper;
     public DbInit(RestTemplate restTemplate, RestTemplate restTemplate1, GasStationRepository repository, ModelMapper modelMapper) {
-        this.restTemplate = restTemplate1;
+        this.restTemplate = restTemplate;
         this.repository = repository;
         this.modelMapper = modelMapper;
     }

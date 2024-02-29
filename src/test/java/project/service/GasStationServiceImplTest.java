@@ -8,8 +8,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 import org.modelmapper.ModelMapper;
 import project.dto.GasPriceInfoDTO;
 import project.dto.GasStationDTO;
@@ -18,12 +16,12 @@ import project.repository.GasStationRepository;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
 class GasStationServiceImplTest {
 
     private GasStationServiceImpl gasStationService;
@@ -52,9 +50,17 @@ class GasStationServiceImplTest {
         GasStation testGasStation2 = createTestGasStation().setE5(BigDecimal.valueOf(2.0)).setE10(BigDecimal.valueOf(2.0)).setDiesel(BigDecimal.valueOf(2.0));
         GasStation testGasStation3 = createTestGasStation().setE5(BigDecimal.valueOf(3.0)).setE10(BigDecimal.valueOf(3.0)).setDiesel(BigDecimal.valueOf(3.0));
 
-        when(repository.findAllByE5Asc()).thenReturn(List.of(testGasStation1.getE5(), testGasStation2.getE5(), testGasStation3.getE5()));
-        when(repository.findAllByE10Asc()).thenReturn(List.of(testGasStation1.getE5(), testGasStation2.getE5(), testGasStation3.getE5()));
-        when(repository.findAllByDieselAsc()).thenReturn(List.of(testGasStation1.getE5(), testGasStation2.getE5(), testGasStation3.getE5()));
+        switch (text) {
+            case "e5":
+                when(repository.findAllByE5Asc()).thenReturn(List.of(testGasStation1.getE5(), testGasStation2.getE5(), testGasStation3.getE5()));
+            break;
+            case "e10":
+                when(repository.findAllByE10Asc()).thenReturn(List.of(testGasStation1.getE10(), testGasStation2.getE10(), testGasStation3.getE10()));
+            break;
+            case "diesel":
+                when(repository.findAllByDieselAsc()).thenReturn(List.of(testGasStation1.getDiesel(), testGasStation2.getDiesel(), testGasStation3.getDiesel()));
+            break;
+        }
 
         GasPriceInfoDTO gasPriceInfo = gasStationService.getGasPriceInfo(text);
         Assertions.assertEquals(BigDecimal.valueOf(2.0).setScale(2, RoundingMode.HALF_UP), gasPriceInfo.getMedian());
@@ -66,10 +72,18 @@ class GasStationServiceImplTest {
     void getGasPriceInfoWith2Stations(String text) {
         GasStation testGasStation1 = createTestGasStation().setE5(BigDecimal.valueOf(1.0)).setE10(BigDecimal.valueOf(1.0)).setDiesel(BigDecimal.valueOf(1.0));
         GasStation testGasStation2 = createTestGasStation().setE5(BigDecimal.valueOf(2.0)).setE10(BigDecimal.valueOf(2.0)).setDiesel(BigDecimal.valueOf(2.0));
-        when(repository.findAllByE5Asc()).thenReturn(List.of(testGasStation1.getE5(), testGasStation2.getE5()));
-        when(repository.findAllByE10Asc()).thenReturn(List.of(testGasStation1.getE5(), testGasStation2.getE5()));
-        when(repository.findAllByDieselAsc()).thenReturn(List.of(testGasStation1.getE5(), testGasStation2.getE5()));
 
+        switch (text) {
+            case "e5":
+                when(repository.findAllByE5Asc()).thenReturn(List.of(testGasStation1.getE5(), testGasStation2.getE5()));
+                break;
+            case "e10":
+                when(repository.findAllByE10Asc()).thenReturn(List.of(testGasStation1.getE5(), testGasStation2.getE5()));
+                break;
+            case "diesel":
+                when(repository.findAllByDieselAsc()).thenReturn(List.of(testGasStation1.getE5(), testGasStation2.getE5()));
+                break;
+        }
         GasPriceInfoDTO gasPriceInfo = gasStationService.getGasPriceInfo(text);
         Assertions.assertEquals(BigDecimal.valueOf(1.5).setScale(2, RoundingMode.HALF_UP), gasPriceInfo.getMedian());
         Assertions.assertEquals(BigDecimal.valueOf(1.0), gasPriceInfo.getMin());
@@ -91,5 +105,40 @@ class GasStationServiceImplTest {
                 .setPlace("TestPlace")
                 .setPostCode(7000)
                 .setStreet("TestStreet");
+    }
+
+    //2.3
+    @Test
+    void calculateMinMaxAndMedianTest() {
+        List<BigDecimal> testList = new ArrayList<>();
+        testList.add(BigDecimal.valueOf(1.2));
+        testList.add(BigDecimal.valueOf(1.1));
+        testList.add(BigDecimal.valueOf(2.1));
+        testList.add(BigDecimal.valueOf(2.3));
+        testList.add(BigDecimal.valueOf(1.4));
+        testList.add(BigDecimal.valueOf(2.2));
+        testList.add(BigDecimal.valueOf(1.3));
+        testList.sort(BigDecimal::compareTo);
+
+        BigDecimal expectedResult = BigDecimal.valueOf(1.4).setScale(2, RoundingMode.HALF_DOWN);
+        GasPriceInfoDTO result = GasStationServiceImpl.calculateMinMaxAndMedian(testList);
+        Assertions.assertEquals(expectedResult, result.getMedian());
+    }
+
+    @Test
+    void calculateMinMaxAndMedianTestWithEven() {
+        List<BigDecimal> testList = new ArrayList<>();
+        testList.add(BigDecimal.valueOf(1.2));
+        testList.add(BigDecimal.valueOf(1.1));
+        testList.add(BigDecimal.valueOf(2.1));
+        testList.add(BigDecimal.valueOf(1.4));
+        testList.add(BigDecimal.valueOf(2.2));
+        testList.add(BigDecimal.valueOf(1.3));
+
+
+        testList.sort(BigDecimal::compareTo);
+        BigDecimal expectedResult = BigDecimal.valueOf(1.35);
+        GasPriceInfoDTO result = GasStationServiceImpl.calculateMinMaxAndMedian(testList);
+        Assertions.assertEquals(expectedResult, result.getMedian());
     }
 }
