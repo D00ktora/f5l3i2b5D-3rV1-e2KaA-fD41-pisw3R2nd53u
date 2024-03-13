@@ -141,4 +141,10 @@ class GasStationServiceImplTest {
         GasPriceInfoDTO result = GasStationServiceImpl.calculateMinMaxAndMedian(testList);
         Assertions.assertEquals(expectedResult, result.getMedian());
     }
+
+    @Test
+    void testGetGasPriceInfoWithInvalidInput() {
+        String invalidInput = "Invalid gas type";
+        Assertions.assertNull(gasStationService.getGasPriceInfo(invalidInput));
+    }
 }

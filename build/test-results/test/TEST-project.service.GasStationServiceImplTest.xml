@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="project.service.GasStationServiceImplTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2024-02-29T10:01:12" hostname="Stilyans-MBP.lan" time="0.599">
-  <properties/>
-  <testcase name="[1] text=e5" classname="project.service.GasStationServiceImplTest" time="0.59"/>
-  <testcase name="[2] text=e10" classname="project.service.GasStationServiceImplTest" time="0.002"/>
-  <testcase name="[3] text=diesel" classname="project.service.GasStationServiceImplTest" time="0.003"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
