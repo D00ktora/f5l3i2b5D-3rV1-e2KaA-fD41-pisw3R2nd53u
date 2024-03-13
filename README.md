@@ -6,6 +6,9 @@ This micro-service provides functionalities to retrieve and store current gas st
 ## Coding Challenge Description
 The objective is to create a micro-service that fetches the latest gas station data from a provided link on every start, filters and stores only open stations in a local database, and exposes REST endpoints for search functions and statistical analysis.
 
+# Some text
+
+
 ### Search Functions:
 - Retrieve median, maximum, and minimum prices for a given fuel type (accepted types: diesel, e5, and e10). If wrong input is provided error code 404 not find.
 - Search gas stations by name. If name is invalid (not existing in DB) error code 404 not find. 
