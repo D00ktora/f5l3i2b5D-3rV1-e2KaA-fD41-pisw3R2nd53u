@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,6 +46,12 @@ class GasStationServiceImplTest {
 
         assertEquals(1, stationsByName.size());
         assertEquals(testGasStation.getName(), stationsByName.get(0).getName());
+    }
+    @Test
+    void getStationsByNameWithInvalidName() {
+        when(repository.findByName("TestName")).thenThrow(NoSuchElementException.class);
+
+        assertThrows(NoSuchElementException.class, () -> gasStationService.getStationsByName("TestName"));
     }
     @Test
     void verifyOneCallOfFindByNameInGetStationByName() {
@@ -100,7 +107,7 @@ class GasStationServiceImplTest {
     void getGasPriceInfoWithInvalidInput() {
         String invalidInput = "Invalid gas type";
 
-        assertNull(gasStationService.getGasPriceInfo(invalidInput));
+        assertThrows(NoSuchElementException.class, () -> gasStationService.getGasPriceInfo(invalidInput));
         verifyNoMoreInteractions(repository);
     }
 
