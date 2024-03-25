@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class GasStationServiceImpl implements GasStationService {
@@ -50,8 +51,9 @@ public class GasStationServiceImpl implements GasStationService {
                 return calculateMinMaxAndMedian(prices);
             }
         }
-        return null;
+        throw new NoSuchElementException();
     }
+
     public static GasPriceInfoDTO calculateMinMaxAndMedian(List<BigDecimal> stationPriceInfos) {
         BigDecimal median;
         int firstIndex = stationPriceInfos.size() / 2 - 1;

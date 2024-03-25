@@ -150,23 +150,4 @@ public class GasStationDTO {
         this.postCode = postCode;
         return this;
     }
-
-    @Override
-    public String toString() {
-        return "GasStationDTO{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", brand='" + brand + '\'' +
-                ", street='" + street + '\'' +
-                ", place='" + place + '\'' +
-                ", lat=" + lat +
-                ", lng=" + lng +
-                ", diesel=" + diesel +
-                ", e5=" + e5 +
-                ", e10=" + e10 +
-                ", isOpen=" + isOpen +
-                ", houseNumber='" + houseNumber + '\'' +
-                ", postcode=" + postCode +
-                '}';
-    }
 }
