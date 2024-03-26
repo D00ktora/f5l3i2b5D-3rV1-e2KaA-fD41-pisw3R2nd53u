@@ -38,7 +38,7 @@ class GasStationServiceImplTest {
     }
 
     @Test
-    void getStationsByName() {
+    void getStationsByNameTest() {
         GasStation testGasStation = createTestGasStation();
         when(repository.findByName(testGasStation.getName())).thenReturn(List.of(testGasStation));
 
@@ -47,25 +47,28 @@ class GasStationServiceImplTest {
         assertEquals(1, stationsByName.size());
         assertEquals(testGasStation.getName(), stationsByName.get(0).getName());
     }
+    
     @Test
-    void getStationsByNameWithInvalidName() {
+    void getStationsByNameTestWithInvalidName() {
         when(repository.findByName("TestName")).thenThrow(NoSuchElementException.class);
 
         assertThrows(NoSuchElementException.class, () -> gasStationService.getStationsByName("TestName"));
     }
+
     @Test
-    void verifyOneCallOfFindByNameInGetStationByName() {
+    void verifyOnlyOneCallOfFindByNameInGetStationByName() {
         GasStation testGasStation = createTestGasStation();
         when(repository.findByName("TestName")).thenReturn(List.of(testGasStation));
 
-        List<GasStationDTO> listOfGasStations = gasStationService.getStationsByName("TestName");
+        gasStationService.getStationsByName("TestName");
 
         verify(repository).findByName("TestName");
         verifyNoMoreInteractions(repository);
     }
+
     @ParameterizedTest
     @ValueSource(strings = {"e5", "e10", "diesel"})
-    void getGasPriceInfoWith3Stations(String fuelType) {
+    void getGasPriceInfoTestWithThreeStations(String fuelType) {
         setupFunctionalityOfFindAllByFuelTypeWithThreeGasStations(fuelType);
 
         GasPriceInfoDTO gasPriceInfo = gasStationService.getGasPriceInfo(fuelType);
@@ -74,9 +77,10 @@ class GasStationServiceImplTest {
         assertEquals(BigDecimal.valueOf(1.0), gasPriceInfo.getMin());
         assertEquals(BigDecimal.valueOf(3.0), gasPriceInfo.getMax());
     }
+
     @ParameterizedTest
     @ValueSource(strings = {"e5", "e10", "diesel"})
-    void getGasPriceInfoWith2Stations(String text) {
+    void getGasPriceInfoTestWithTwoStations(String text) {
         setupFunctionalityOfFindAllByFuelTypeWithTwoGasStations(text);
 
         GasPriceInfoDTO gasPriceInfo = gasStationService.getGasPriceInfo(text);
@@ -85,8 +89,9 @@ class GasStationServiceImplTest {
         assertEquals(BigDecimal.valueOf(1.0), gasPriceInfo.getMin());
         assertEquals(BigDecimal.valueOf(2.0), gasPriceInfo.getMax());
     }
+
     @Test
-    void calculateMinMaxAndMedianTest() {
+    void calculateMinMaxAndMedianTestWithOddNumberOfValues() {
         List<BigDecimal> testListWithOddNumberOfValues = setupUnorderedListWithOddNumberOfValues();
         BigDecimal expectedResult = BigDecimal.valueOf(1.4).setScale(2, RoundingMode.HALF_DOWN);
 
@@ -94,8 +99,9 @@ class GasStationServiceImplTest {
 
         assertEquals(expectedResult, result.getMedian());
     }
+
     @Test
-    void calculateMinMaxAndMedianTestWithEven() {
+    void calculateMinMaxAndMedianTestWithEvenNumberOfValues() {
         List<BigDecimal> testListWithEvenNumberOfValues = setupUnorderedListWithEvenValues();
         BigDecimal expectedResult = BigDecimal.valueOf(1.35);
 
@@ -103,8 +109,9 @@ class GasStationServiceImplTest {
 
         assertEquals(expectedResult, result.getMedian());
     }
+
     @Test
-    void getGasPriceInfoWithInvalidInput() {
+    void getGasPriceInfoTestWithInvalidInput() {
         String invalidInput = "Invalid gas type";
 
         assertThrows(NoSuchElementException.class, () -> gasStationService.getGasPriceInfo(invalidInput));
@@ -127,6 +134,7 @@ class GasStationServiceImplTest {
                 .setPostCode(7000)
                 .setStreet("TestStreet");
     }
+
     private void setupFunctionalityOfFindAllByFuelTypeWithThreeGasStations(String text) {
         GasStation testGasStation1 = createTestGasStation().setE5(BigDecimal.valueOf(1.0)).setE10(BigDecimal.valueOf(1.0)).setDiesel(BigDecimal.valueOf(1.0));
         GasStation testGasStation2 = createTestGasStation().setE5(BigDecimal.valueOf(2.0)).setE10(BigDecimal.valueOf(2.0)).setDiesel(BigDecimal.valueOf(2.0));
@@ -143,6 +151,7 @@ class GasStationServiceImplTest {
                 break;
         }
     }
+
     private void setupFunctionalityOfFindAllByFuelTypeWithTwoGasStations(String text) {
         GasStation testGasStation1 = createTestGasStation().setE5(BigDecimal.valueOf(1.0)).setE10(BigDecimal.valueOf(1.0)).setDiesel(BigDecimal.valueOf(1.0));
         GasStation testGasStation2 = createTestGasStation().setE5(BigDecimal.valueOf(2.0)).setE10(BigDecimal.valueOf(2.0)).setDiesel(BigDecimal.valueOf(2.0));
@@ -158,6 +167,7 @@ class GasStationServiceImplTest {
                 break;
         }
     }
+
     private static List<BigDecimal> setupUnorderedListWithOddNumberOfValues() {
         List<BigDecimal> testList = new ArrayList<>();
         testList.add(BigDecimal.valueOf(1.2));
@@ -170,6 +180,7 @@ class GasStationServiceImplTest {
         testList.sort(BigDecimal::compareTo);
         return testList;
     }
+
     private static List<BigDecimal> setupUnorderedListWithEvenValues() {
         List<BigDecimal> testList = new ArrayList<>();
         testList.add(BigDecimal.valueOf(1.2));
