@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
@@ -36,6 +37,8 @@ class GasStationControllerTest {
         ResponseEntity<List<GasStationDTO>> response = gasStationController.getGasStationByName(stationName);
 
         // THEN
+        assertThat(response.getStatusCode().toString()).isEqualTo(HttpStatus.OK.toString());
+        assertThat(response.getBody()).isEqualTo(stations);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(stations, response.getBody());
     }
@@ -50,6 +53,7 @@ class GasStationControllerTest {
         ResponseEntity<List<GasStationDTO>> response = gasStationController.getGasStationByName(stationName);
 
         //THEN
+        assertThat(response.getStatusCode().toString()).isEqualTo(HttpStatus.NOT_FOUND.toString());
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
@@ -64,6 +68,8 @@ class GasStationControllerTest {
         ResponseEntity<GasPriceInfoDTO> response = gasStationController.getGasPriceInfo(fuelType);
 
         // THEN
+        assertThat(response.getStatusCode().toString()).isEqualTo(HttpStatus.OK.toString());
+        assertThat(response.getBody()).isEqualTo(gasPriceInfo);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(gasPriceInfo, response.getBody());
     }
@@ -78,6 +84,7 @@ class GasStationControllerTest {
         ResponseEntity<GasPriceInfoDTO> response = gasStationController.getGasPriceInfo(fuelType);
 
         // THEN
+        assertThat(response.getStatusCode().toString()).isEqualTo(HttpStatus.NOT_FOUND.toString());
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 

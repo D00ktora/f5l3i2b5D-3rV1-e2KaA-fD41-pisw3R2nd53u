@@ -13,13 +13,14 @@ import project.dto.GasStationDTO;
 import project.model.GasStation;
 import project.repository.GasStationRepository;
 
-import java.lang.reflect.Executable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
@@ -49,6 +50,7 @@ class GasStationServiceImplTest {
         List<GasStationDTO> stationsByName = gasStationService.getStationsByName("TestName");
 
         // THEN
+        assertThat(stationsByName.size()).isEqualTo(1);
         assertEquals(1, stationsByName.size());
         assertEquals(testGasStation.getName(), stationsByName.get(0).getName());
     }
@@ -59,6 +61,7 @@ class GasStationServiceImplTest {
         when(repository.findByName("TestName")).thenThrow(NoSuchElementException.class);
 
         // WHEN THEN
+        assertThatThrownBy(() -> gasStationService.getStationsByName("TestName")).isInstanceOf(NoSuchElementException.class);
         assertThrows(NoSuchElementException.class, () -> gasStationService.getStationsByName("TestName"));
     }
 
@@ -86,6 +89,9 @@ class GasStationServiceImplTest {
         GasPriceInfoDTO gasPriceInfo = gasStationService.getGasPriceInfo(fuelType);
 
         // THEN
+        assertThat(gasStationService.getGasPriceInfo(fuelType).getMedian()).isEqualTo(BigDecimal.valueOf(2.0).setScale(2, RoundingMode.HALF_UP));
+        assertThat(gasStationService.getGasPriceInfo(fuelType).getMin()).isEqualTo(BigDecimal.valueOf(1.0));
+        assertThat(gasStationService.getGasPriceInfo(fuelType).getMax()).isEqualTo(BigDecimal.valueOf(3.0));
         assertEquals(BigDecimal.valueOf(2.0).setScale(2, RoundingMode.HALF_UP), gasPriceInfo.getMedian());
         assertEquals(BigDecimal.valueOf(1.0), gasPriceInfo.getMin());
         assertEquals(BigDecimal.valueOf(3.0), gasPriceInfo.getMax());
@@ -93,14 +99,17 @@ class GasStationServiceImplTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"e5", "e10", "diesel"})
-    void getGasPriceInfoTestWithTwoStations(String text) {
+    void getGasPriceInfoTestWithTwoStations(String fuelType) {
         // GIVEN
-        setupFunctionalityOfFindAllByFuelTypeWithTwoGasStations(text);
+        setupFunctionalityOfFindAllByFuelTypeWithTwoGasStations(fuelType);
 
         // WHEN
-        GasPriceInfoDTO gasPriceInfo = gasStationService.getGasPriceInfo(text);
+        GasPriceInfoDTO gasPriceInfo = gasStationService.getGasPriceInfo(fuelType);
 
         // THEN
+        assertThat(gasStationService.getGasPriceInfo(fuelType).getMedian()).isEqualTo(BigDecimal.valueOf(1.5).setScale(2, RoundingMode.HALF_UP));
+        assertThat(gasStationService.getGasPriceInfo(fuelType).getMin()).isEqualTo(BigDecimal.valueOf(1.0));
+        assertThat(gasStationService.getGasPriceInfo(fuelType).getMax()).isEqualTo(BigDecimal.valueOf(2.0));
         assertEquals(BigDecimal.valueOf(1.5).setScale(2, RoundingMode.HALF_UP), gasPriceInfo.getMedian());
         assertEquals(BigDecimal.valueOf(1.0), gasPriceInfo.getMin());
         assertEquals(BigDecimal.valueOf(2.0), gasPriceInfo.getMax());
@@ -116,6 +125,12 @@ class GasStationServiceImplTest {
         GasPriceInfoDTO result = GasStationServiceImpl.calculateMinMaxAndMedian(testListWithOddNumberOfValues);
 
         //THEN
+        assertThat(
+                GasStationServiceImpl
+                        .calculateMinMaxAndMedian(testListWithOddNumberOfValues)
+                        .getMedian()
+        )
+                .isEqualTo(expectedResult);
         assertEquals(expectedResult, result.getMedian());
     }
 
@@ -129,6 +144,12 @@ class GasStationServiceImplTest {
         GasPriceInfoDTO result = GasStationServiceImpl.calculateMinMaxAndMedian(testListWithEvenNumberOfValues);
 
         //THEN
+        assertThat(
+                GasStationServiceImpl
+                        .calculateMinMaxAndMedian(testListWithEvenNumberOfValues)
+                        .getMedian()
+        )
+                .isEqualTo(expectedResult);
         assertEquals(expectedResult, result.getMedian());
     }
 
@@ -138,6 +159,7 @@ class GasStationServiceImplTest {
         String invalidInput = "Invalid gas type";
 
         // WHEN THEN
+        assertThatThrownBy(() -> gasStationService.getGasPriceInfo(invalidInput)).isInstanceOf(NoSuchElementException.class);
         assertThrows(NoSuchElementException.class, () -> gasStationService.getGasPriceInfo(invalidInput));
         verifyNoMoreInteractions(repository);
     }
