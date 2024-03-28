@@ -4,8 +4,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import project.dto.GasPriceInfoDTO;
-import project.dto.GasStationDTO;
+import project.dto.GasPriceInfo;
+import project.dto.GasStation;
 import project.service.GasStationServiceImpl;
 
 import java.util.List;
@@ -19,8 +19,8 @@ public class GasStationController {
     }
 
     @GetMapping("/gas-stations/{name}")
-    public ResponseEntity<List<GasStationDTO>> getGasStationByName(@PathVariable("name") String stationName) {
-        List<GasStationDTO> stationsByName = gasStationService.getStationsByName(stationName);
+    public ResponseEntity<List<GasStation>> getGasStationByName(@PathVariable("name") String stationName) {
+        List<GasStation> stationsByName = gasStationService.getStationsByName(stationName);
         if (stationsByName.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
@@ -29,8 +29,8 @@ public class GasStationController {
     }
 
     @GetMapping("/fuel-prices/{fuelType}")
-    public ResponseEntity<GasPriceInfoDTO> getGasPriceInfo(@PathVariable("fuelType") String type) {
-        GasPriceInfoDTO gasPriceInfo = gasStationService.getGasPriceInfo(type);
+    public ResponseEntity<GasPriceInfo> getGasPriceInfo(@PathVariable("fuelType") String type) {
+        GasPriceInfo gasPriceInfo = gasStationService.getGasPriceInfo(type);
         if (gasPriceInfo != null) {
             return ResponseEntity.ok(gasPriceInfo);
         } else {

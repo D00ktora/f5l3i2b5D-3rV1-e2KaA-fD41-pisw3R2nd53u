@@ -4,9 +4,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import project.dto.GasStationDTO;
-import project.dto.ListOfGasStationsDTO;
-import project.model.GasStation;
+import project.dto.GasStation;
+import project.dto.ListOfGasStations;
 import project.repository.GasStationRepository;
 
 import java.util.ArrayList;
@@ -25,14 +24,14 @@ public class DbInit implements CommandLineRunner {
     }
     @Override
     public void run(String... args) throws Exception {
-        ListOfGasStationsDTO forObject = restTemplate.getForObject("https://wejago.de/assets/data/gas-stations-data", ListOfGasStationsDTO.class);
+        ListOfGasStations forObject = restTemplate.getForObject("https://wejago.de/assets/data/gas-stations-data", ListOfGasStations.class);
         if (forObject == null) {
             return;
         }
-        List<GasStationDTO> stationsDTO = forObject.getStations();
-        List<GasStation> gasStations = new ArrayList<>();
-        for (GasStationDTO station : stationsDTO) {
-            GasStation mapped = modelMapper.map(station, GasStation.class);
+        List<GasStation> stationsDTO = forObject.getStations();
+        List<project.model.GasStation> gasStations = new ArrayList<>();
+        for (GasStation station : stationsDTO) {
+            project.model.GasStation mapped = modelMapper.map(station, project.model.GasStation.class);
             if (mapped != null && mapped.getOpen()) {
                 gasStations.add(mapped);
             }

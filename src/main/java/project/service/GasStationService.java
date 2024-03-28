@@ -1,12 +1,12 @@
 package project.service;
 
-import project.dto.GasPriceInfoDTO;
-import project.dto.GasStationDTO;
+import project.dto.GasPriceInfo;
+import project.dto.GasStation;
 
 import java.util.List;
 
 public interface GasStationService {
-    List<GasStationDTO> getStationsByName(String stationName);
+    List<GasStation> getStationsByName(String stationName);
 
-    GasPriceInfoDTO getGasPriceInfo(String type);
+    GasPriceInfo getGasPriceInfo(String type);
 }

@@ -4,7 +4,7 @@ import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
 
-public class GasStationDTO {
+public class GasStation {
 
     private String id;
     @Size(max = 255)
@@ -38,7 +38,7 @@ public class GasStationDTO {
         return id;
     }
 
-    public GasStationDTO setId(String  id) {
+    public GasStation setId(String  id) {
         this.id = id;
         return this;
     }
@@ -47,7 +47,7 @@ public class GasStationDTO {
         return name;
     }
 
-    public GasStationDTO setName(String name) {
+    public GasStation setName(String name) {
         this.name = name;
         return this;
     }
@@ -56,7 +56,7 @@ public class GasStationDTO {
         return brand;
     }
 
-    public GasStationDTO setBrand(String brand) {
+    public GasStation setBrand(String brand) {
         this.brand = brand;
         return this;
     }
@@ -65,7 +65,7 @@ public class GasStationDTO {
         return street;
     }
 
-    public GasStationDTO setStreet(String street) {
+    public GasStation setStreet(String street) {
         this.street = street;
         return this;
     }
@@ -74,7 +74,7 @@ public class GasStationDTO {
         return place;
     }
 
-    public GasStationDTO setPlace(String place) {
+    public GasStation setPlace(String place) {
         this.place = place;
         return this;
     }
@@ -83,7 +83,7 @@ public class GasStationDTO {
         return lat;
     }
 
-    public GasStationDTO setLat(BigDecimal lat) {
+    public GasStation setLat(BigDecimal lat) {
         this.lat = lat;
         return this;
     }
@@ -92,7 +92,7 @@ public class GasStationDTO {
         return lng;
     }
 
-    public GasStationDTO setLng(BigDecimal lng) {
+    public GasStation setLng(BigDecimal lng) {
         this.lng = lng;
         return this;
     }
@@ -101,7 +101,7 @@ public class GasStationDTO {
         return diesel;
     }
 
-    public GasStationDTO setDiesel(BigDecimal diesel) {
+    public GasStation setDiesel(BigDecimal diesel) {
         this.diesel = diesel;
         return this;
     }
@@ -110,7 +110,7 @@ public class GasStationDTO {
         return e5;
     }
 
-    public GasStationDTO setE5(BigDecimal e5) {
+    public GasStation setE5(BigDecimal e5) {
         this.e5 = e5;
         return this;
     }
@@ -119,7 +119,7 @@ public class GasStationDTO {
         return e10;
     }
 
-    public GasStationDTO setE10(BigDecimal e10) {
+    public GasStation setE10(BigDecimal e10) {
         this.e10 = e10;
         return this;
     }
@@ -128,7 +128,7 @@ public class GasStationDTO {
         return isOpen;
     }
 
-    public GasStationDTO setIsOpen(Boolean open) {
+    public GasStation setIsOpen(Boolean open) {
         isOpen = open;
         return this;
     }
@@ -137,7 +137,7 @@ public class GasStationDTO {
         return houseNumber;
     }
 
-    public GasStationDTO setHouseNumber(String houseNumber) {
+    public GasStation setHouseNumber(String houseNumber) {
         this.houseNumber = houseNumber;
         return this;
     }
@@ -146,7 +146,7 @@ public class GasStationDTO {
         return postCode;
     }
 
-    public GasStationDTO setPostCode(Integer postCode) {
+    public GasStation setPostCode(Integer postCode) {
         this.postCode = postCode;
         return this;
     }

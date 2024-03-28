@@ -2,9 +2,8 @@ package project.service;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import project.dto.GasPriceInfoDTO;
-import project.dto.GasStationDTO;
-import project.model.GasStation;
+import project.dto.GasPriceInfo;
+import project.dto.GasStation;
 import project.repository.GasStationRepository;
 
 import java.math.BigDecimal;
@@ -23,20 +22,20 @@ public class GasStationServiceImpl implements GasStationService {
         this.modelMapper = modelMapper;
     }
 
-    public List<GasStationDTO> getStationsByName(String stationName) {
-        List<GasStation> byName = gasStationRepository.findByName(stationName);
-        List<GasStationDTO> gasStationDTOList = new ArrayList<>();
-        for (GasStation gasStationDTO : byName) {
-            GasStationDTO map = modelMapper.map(gasStationDTO, GasStationDTO.class);
+    public List<GasStation> getStationsByName(String stationName) {
+        List<project.model.GasStation> byName = gasStationRepository.findByName(stationName);
+        List<GasStation> gasStationList = new ArrayList<>();
+        for (project.model.GasStation gasStation : byName) {
+            GasStation map = modelMapper.map(gasStation, GasStation.class);
             if (map != null) {
-                gasStationDTOList.add(map);
+                gasStationList.add(map);
             }
         }
-        return gasStationDTOList;
+        return gasStationList;
     }
 
     @Override
-    public GasPriceInfoDTO getGasPriceInfo(String type) {
+    public GasPriceInfo getGasPriceInfo(String type) {
         switch (type) {
             case "e5" -> {
                 List<BigDecimal> prices = gasStationRepository.findAllByE5Asc();
@@ -54,7 +53,7 @@ public class GasStationServiceImpl implements GasStationService {
         throw new NoSuchElementException();
     }
 
-    public static GasPriceInfoDTO calculateMinMaxAndMedian(List<BigDecimal> stationPriceInfos) {
+    public static GasPriceInfo calculateMinMaxAndMedian(List<BigDecimal> stationPriceInfos) {
         BigDecimal median;
         int firstIndex = stationPriceInfos.size() / 2 - 1;
         int secondIndex = stationPriceInfos.size() / 2;
@@ -68,7 +67,7 @@ public class GasStationServiceImpl implements GasStationService {
             median = BigDecimal.valueOf(stationPriceInfos.get(secondIndex).doubleValue());
         }
 
-        return new GasPriceInfoDTO()
+        return new GasPriceInfo()
                 .setMedian(median.setScale(2, RoundingMode.HALF_UP))
                 .setMax(stationPriceInfos.get(stationPriceInfos.size() - 1))
                 .setMin(stationPriceInfos.get(0));
