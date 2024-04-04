@@ -7,15 +7,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import project.dto.GasPriceInfoDTO;
-import project.dto.GasStationDTO;
+import project.dto.GasPriceInfo;
+import project.dto.GasStation;
 import project.service.GasStationServiceImpl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class GasStationControllerTest {
@@ -30,14 +30,18 @@ class GasStationControllerTest {
     void getGasStationByNameTestWithValidInput() {
         // GIVEN
         String stationName = "Test Station";
-        List<GasStationDTO> stations = setupResultsFromGetStationByNameToReturnListWithOneStation(stationName);
+        List<GasStation> stations = setupResultsFromGetStationByNameToReturnListWithOneStation(stationName);
 
         // WHEN
-        ResponseEntity<List<GasStationDTO>> response = gasStationController.getGasStationByName(stationName);
+        ResponseEntity<List<GasStation>> gasStationsResponse = gasStationController.getGasStationByName(stationName);
 
         // THEN
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(stations, response.getBody());
+        assertThat(gasStationsResponse)
+                .extracting("status")
+                .isEqualTo(HttpStatus.OK);
+        assertThat(gasStationsResponse)
+                .extracting("body")
+                .isEqualTo(stations);
     }
 
     @Test
@@ -46,26 +50,32 @@ class GasStationControllerTest {
         String stationName = "Non-existent Station";
         when(gasStationService.getStationsByName(stationName)).thenReturn(new ArrayList<>());
 
-        //WHEN
-        ResponseEntity<List<GasStationDTO>> response = gasStationController.getGasStationByName(stationName);
+        // WHEN
+        ResponseEntity<List<GasStation>> gasStationResponse = gasStationController.getGasStationByName(stationName);
 
-        //THEN
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        // THEN
+        assertThat(gasStationResponse)
+                .extracting("status")
+                .isEqualTo(HttpStatus.NOT_FOUND);
     }
 
     @Test
     void getGasPriceInfoTestWithValidInfo() {
         // GIVEN
         String fuelType = "Gasoline";
-        GasPriceInfoDTO gasPriceInfo = createTestGasPriceInfoDTO();
+        GasPriceInfo gasPriceInfo = createTestGasPriceInfoDTO();
         when(gasStationService.getGasPriceInfo(fuelType)).thenReturn(gasPriceInfo);
 
         // WHEN
-        ResponseEntity<GasPriceInfoDTO> response = gasStationController.getGasPriceInfo(fuelType);
+        ResponseEntity<GasPriceInfo> gasPriceInfoResponse = gasStationController.getGasPriceInfo(fuelType);
 
         // THEN
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(gasPriceInfo, response.getBody());
+        assertThat(gasPriceInfoResponse)
+                .extracting("status")
+                .isEqualTo(HttpStatus.OK);
+        assertThat(gasPriceInfoResponse)
+                .extracting("body")
+                .isEqualTo(gasPriceInfo);
     }
 
     @Test
@@ -75,21 +85,23 @@ class GasStationControllerTest {
         when(gasStationService.getGasPriceInfo(fuelType)).thenReturn(null);
 
         // WHEN
-        ResponseEntity<GasPriceInfoDTO> response = gasStationController.getGasPriceInfo(fuelType);
+        ResponseEntity<GasPriceInfo> gasPrice = gasStationController.getGasPriceInfo(fuelType);
 
         // THEN
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertThat(gasPrice)
+                .extracting("status")
+                .isEqualTo(HttpStatus.NOT_FOUND);
     }
 
-    private List<GasStationDTO> setupResultsFromGetStationByNameToReturnListWithOneStation(String stationName) {
-        List<GasStationDTO> stations = new ArrayList<>();
+    private List<GasStation> setupResultsFromGetStationByNameToReturnListWithOneStation(String stationName) {
+        List<GasStation> stations = new ArrayList<>();
         stations.add(createTestGasStationDTO());
         when(gasStationService.getStationsByName(stationName)).thenReturn(stations);
         return stations;
     }
 
-    private static GasStationDTO createTestGasStationDTO() {
-        return new GasStationDTO()
+    private static GasStation createTestGasStationDTO() {
+        return new GasStation()
                 .setBrand("Test Brand")
                 .setDiesel(BigDecimal.valueOf(1.0))
                 .setE5(BigDecimal.valueOf(1.5))
@@ -105,8 +117,8 @@ class GasStationControllerTest {
                 .setIsOpen(true);
     }
 
-    private static GasPriceInfoDTO createTestGasPriceInfoDTO() {
-        return new GasPriceInfoDTO()
+    private static GasPriceInfo createTestGasPriceInfoDTO() {
+        return new GasPriceInfo()
                 .setMax(BigDecimal.valueOf(1.0))
                 .setMax(BigDecimal.valueOf(2.0))
                 .setMedian(BigDecimal.valueOf(1.5));

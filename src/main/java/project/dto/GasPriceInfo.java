@@ -2,7 +2,7 @@ package project.dto;
 
 import java.math.BigDecimal;
 
-public class GasPriceInfoDTO {
+public class GasPriceInfo {
     private BigDecimal median;
     private BigDecimal min;
     private BigDecimal max;
@@ -11,7 +11,7 @@ public class GasPriceInfoDTO {
         return median;
     }
 
-    public GasPriceInfoDTO setMedian(BigDecimal median) {
+    public GasPriceInfo setMedian(BigDecimal median) {
         this.median = median;
         return this;
     }
@@ -20,7 +20,7 @@ public class GasPriceInfoDTO {
         return min;
     }
 
-    public GasPriceInfoDTO setMin(BigDecimal min) {
+    public GasPriceInfo setMin(BigDecimal min) {
         this.min = min;
         return this;
     }
@@ -29,7 +29,7 @@ public class GasPriceInfoDTO {
         return max;
     }
 
-    public GasPriceInfoDTO setMax(BigDecimal max) {
+    public GasPriceInfo setMax(BigDecimal max) {
         this.max = max;
         return this;
     }

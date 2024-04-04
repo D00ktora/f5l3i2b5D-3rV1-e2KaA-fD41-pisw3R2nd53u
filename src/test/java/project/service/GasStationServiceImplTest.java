@@ -8,20 +8,18 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import project.dto.GasPriceInfoDTO;
-import project.dto.GasStationDTO;
-import project.model.GasStation;
+import project.dto.GasPriceInfo;
+import project.dto.GasStation;
 import project.repository.GasStationRepository;
 
-import java.lang.reflect.Executable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -42,15 +40,15 @@ class GasStationServiceImplTest {
     void getStationsByNameTest() {
 
         // GIVEN
-        GasStation testGasStation = createTestGasStation();
+        project.model.GasStation testGasStation = createTestGasStation();
         when(repository.findByName(testGasStation.getName())).thenReturn(List.of(testGasStation));
 
         // WHEN
-        List<GasStationDTO> stationsByName = gasStationService.getStationsByName("TestName");
+        List<GasStation> gasStations = gasStationService.getStationsByName("TestName");
 
         // THEN
-        assertEquals(1, stationsByName.size());
-        assertEquals(testGasStation.getName(), stationsByName.get(0).getName());
+        assertThat(gasStations).hasSize(1);
+        assertThat(gasStations).extracting("name").contains("TestName");
     }
 
     @Test
@@ -59,13 +57,13 @@ class GasStationServiceImplTest {
         when(repository.findByName("TestName")).thenThrow(NoSuchElementException.class);
 
         // WHEN THEN
-        assertThrows(NoSuchElementException.class, () -> gasStationService.getStationsByName("TestName"));
+        assertThatThrownBy(() -> gasStationService.getStationsByName("TestName")).isInstanceOf(NoSuchElementException.class);
     }
 
     @Test
     void verifyOnlyOneCallOfFindByNameInGetStationByName() {
         // GIVEN
-        GasStation testGasStation = createTestGasStation();
+        project.model.GasStation testGasStation = createTestGasStation();
         when(repository.findByName("TestName")).thenReturn(List.of(testGasStation));
 
         // WHEN
@@ -81,29 +79,41 @@ class GasStationServiceImplTest {
     void getGasPriceInfoTestWithThreeStations(String fuelType) {
         // GIVEN
         setupFunctionalityOfFindAllByFuelTypeWithThreeGasStations(fuelType);
-
+        
         // WHEN
-        GasPriceInfoDTO gasPriceInfo = gasStationService.getGasPriceInfo(fuelType);
+        GasPriceInfo gasPrice = gasStationService.getGasPriceInfo(fuelType);
 
         // THEN
-        assertEquals(BigDecimal.valueOf(2.0).setScale(2, RoundingMode.HALF_UP), gasPriceInfo.getMedian());
-        assertEquals(BigDecimal.valueOf(1.0), gasPriceInfo.getMin());
-        assertEquals(BigDecimal.valueOf(3.0), gasPriceInfo.getMax());
+        assertThat(gasPrice)
+                .extracting("median")
+                .isEqualTo(BigDecimal.valueOf(2.0).setScale(2, RoundingMode.HALF_UP));
+        assertThat(gasPrice)
+                .extracting("min")
+                .isEqualTo(BigDecimal.valueOf(1.0));
+        assertThat(gasPrice)
+                .extracting("max")
+                .isEqualTo(BigDecimal.valueOf(3.0));
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"e5", "e10", "diesel"})
-    void getGasPriceInfoTestWithTwoStations(String text) {
+    void getGasPriceInfoTestWithTwoStations(String fuelType) {
         // GIVEN
-        setupFunctionalityOfFindAllByFuelTypeWithTwoGasStations(text);
+        setupFunctionalityOfFindAllByFuelTypeWithTwoGasStations(fuelType);
 
-        // WHEN
-        GasPriceInfoDTO gasPriceInfo = gasStationService.getGasPriceInfo(text);
-
+        //WHEN
+        GasPriceInfo gasPrice = gasStationService.getGasPriceInfo(fuelType);
+        
         // THEN
-        assertEquals(BigDecimal.valueOf(1.5).setScale(2, RoundingMode.HALF_UP), gasPriceInfo.getMedian());
-        assertEquals(BigDecimal.valueOf(1.0), gasPriceInfo.getMin());
-        assertEquals(BigDecimal.valueOf(2.0), gasPriceInfo.getMax());
+        assertThat(gasPrice)
+                .extracting("median")
+                .isEqualTo(BigDecimal.valueOf(1.5).setScale(2, RoundingMode.HALF_UP));
+        assertThat(gasPrice)
+                .extracting("min")
+                .isEqualTo(BigDecimal.valueOf(1.0));
+        assertThat(gasPrice)
+                .extracting("max")
+                .isEqualTo(BigDecimal.valueOf(2.0));
     }
 
     @Test
@@ -111,12 +121,14 @@ class GasStationServiceImplTest {
         // GIVEN
         List<BigDecimal> testListWithOddNumberOfValues = setupUnorderedListWithOddNumberOfValues();
         BigDecimal expectedResult = BigDecimal.valueOf(1.4).setScale(2, RoundingMode.HALF_DOWN);
-
+        
         // WHEN
-        GasPriceInfoDTO result = GasStationServiceImpl.calculateMinMaxAndMedian(testListWithOddNumberOfValues);
+        GasPriceInfo gasPrice = getGasPriceInfoDTOWithMixMaxAndMedian(testListWithOddNumberOfValues);
 
-        //THEN
-        assertEquals(expectedResult, result.getMedian());
+        // THEN
+        assertThat(gasPrice)
+                .extracting("median")
+                .isEqualTo(expectedResult);
     }
 
     @Test
@@ -124,12 +136,14 @@ class GasStationServiceImplTest {
         // GIVEN
         List<BigDecimal> testListWithEvenNumberOfValues = setupUnorderedListWithEvenValues();
         BigDecimal expectedResult = BigDecimal.valueOf(1.35);
-
+        
         // WHEN
-        GasPriceInfoDTO result = GasStationServiceImpl.calculateMinMaxAndMedian(testListWithEvenNumberOfValues);
+        GasPriceInfo gasPrice = getGasPriceInfoDTOWithMixMaxAndMedian(testListWithEvenNumberOfValues);
 
-        //THEN
-        assertEquals(expectedResult, result.getMedian());
+        // THEN
+        assertThat(gasPrice)
+                .extracting("median")
+                .isEqualTo(expectedResult);
     }
 
     @Test
@@ -138,12 +152,16 @@ class GasStationServiceImplTest {
         String invalidInput = "Invalid gas type";
 
         // WHEN THEN
-        assertThrows(NoSuchElementException.class, () -> gasStationService.getGasPriceInfo(invalidInput));
+        assertThatThrownBy(() -> gasStationService.getGasPriceInfo(invalidInput)).isInstanceOf(NoSuchElementException.class);
         verifyNoMoreInteractions(repository);
     }
 
-    private static GasStation createTestGasStation() {
-        return new GasStation()
+    private static GasPriceInfo getGasPriceInfoDTOWithMixMaxAndMedian(List<BigDecimal> testListWithOddNumberOfValues) {
+        return GasStationServiceImpl.calculateMinMaxAndMedian(testListWithOddNumberOfValues);
+    }
+
+    private static project.model.GasStation createTestGasStation() {
+        return new project.model.GasStation()
                 .setBrand("Test Brand")
                 .setDiesel(BigDecimal.valueOf(1.0))
                 .setE5(BigDecimal.valueOf(1.5))
@@ -160,9 +178,9 @@ class GasStationServiceImplTest {
     }
 
     private void setupFunctionalityOfFindAllByFuelTypeWithThreeGasStations(String text) {
-        GasStation testGasStation1 = createTestGasStation().setE5(BigDecimal.valueOf(1.0)).setE10(BigDecimal.valueOf(1.0)).setDiesel(BigDecimal.valueOf(1.0));
-        GasStation testGasStation2 = createTestGasStation().setE5(BigDecimal.valueOf(2.0)).setE10(BigDecimal.valueOf(2.0)).setDiesel(BigDecimal.valueOf(2.0));
-        GasStation testGasStation3 = createTestGasStation().setE5(BigDecimal.valueOf(3.0)).setE10(BigDecimal.valueOf(3.0)).setDiesel(BigDecimal.valueOf(3.0));
+        project.model.GasStation testGasStation1 = createTestGasStation().setE5(BigDecimal.valueOf(1.0)).setE10(BigDecimal.valueOf(1.0)).setDiesel(BigDecimal.valueOf(1.0));
+        project.model.GasStation testGasStation2 = createTestGasStation().setE5(BigDecimal.valueOf(2.0)).setE10(BigDecimal.valueOf(2.0)).setDiesel(BigDecimal.valueOf(2.0));
+        project.model.GasStation testGasStation3 = createTestGasStation().setE5(BigDecimal.valueOf(3.0)).setE10(BigDecimal.valueOf(3.0)).setDiesel(BigDecimal.valueOf(3.0));
         switch (text) {
             case "e5":
                 when(repository.findAllByE5Asc()).thenReturn(List.of(testGasStation1.getE5(), testGasStation2.getE5(), testGasStation3.getE5()));
@@ -177,8 +195,8 @@ class GasStationServiceImplTest {
     }
 
     private void setupFunctionalityOfFindAllByFuelTypeWithTwoGasStations(String text) {
-        GasStation testGasStation1 = createTestGasStation().setE5(BigDecimal.valueOf(1.0)).setE10(BigDecimal.valueOf(1.0)).setDiesel(BigDecimal.valueOf(1.0));
-        GasStation testGasStation2 = createTestGasStation().setE5(BigDecimal.valueOf(2.0)).setE10(BigDecimal.valueOf(2.0)).setDiesel(BigDecimal.valueOf(2.0));
+        project.model.GasStation testGasStation1 = createTestGasStation().setE5(BigDecimal.valueOf(1.0)).setE10(BigDecimal.valueOf(1.0)).setDiesel(BigDecimal.valueOf(1.0));
+        project.model.GasStation testGasStation2 = createTestGasStation().setE5(BigDecimal.valueOf(2.0)).setE10(BigDecimal.valueOf(2.0)).setDiesel(BigDecimal.valueOf(2.0));
         switch (text) {
             case "e5":
                 when(repository.findAllByE5Asc()).thenReturn(List.of(testGasStation1.getE5(), testGasStation2.getE5()));
